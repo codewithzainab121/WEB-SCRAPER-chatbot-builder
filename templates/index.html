@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Scraper Chatbot Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #09090b;
+  --surface: #111113;
+  --surface-2: #18181b;
+  --surface-3: #27272a;
+  --border: #27272a;
+  --border-light: #3f3f46;
+  --text: #fafafa;
+  --text-2: #a1a1aa;
+  --text-3: #71717a;
+  --accent: #6366f1;
+  --accent-glow: rgba(99, 102, 241, 0.35);
+  --accent-2: #8b5cf6;
+  --green: #22c55e;
+  --green-dim: rgba(34, 197, 94, 0.15);
+  --red: #ef4444;
+  --yellow: #eab308;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Background grid effect */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 500px;
+  background: radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrapper { position: relative; z-index: 1; }
+
+/* NAV */
+nav {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(9,9,11,0.85);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.logo-icon {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+}
+
+.nav-badge {
+  margin-left: auto;
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  color: var(--text-2);
+  font-weight: 400;
+}
+
+/* HERO */
+.hero {
+  padding: 70px 40px 50px;
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 14px;
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  color: var(--text-2);
+  margin-bottom: 24px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 5vw, 58px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.hero h1 .gradient {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2), #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero p {
+  font-size: 17px;
+  color: var(--text-2);
+  font-weight: 300;
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* MAIN CARD */
+.main-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-header .icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  border: 1px solid var(--border-light);
+}
+
+.card-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.card-header p {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.card-body { padding: 24px; }
+
+/* STEP INDICATOR */
+.steps {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.step {
+  flex: 1;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-3);
+  transition: all 0.2s;
+  border-right: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.step:last-child { border-right: none; }
+
+.step.active {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.step.done {
+  color: var(--green);
+}
+
+.step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.step.done .step-num {
+  background: var(--green);
+  border-color: var(--green);
+  color: black;
+}
+
+.step-label { font-weight: 500; }
+
+/* FORM ELEMENTS */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-prefix {
+  position: absolute;
+  left: 14px;
+  color: var(--text-3);
+  font-size: 18px;
+  pointer-events: none;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="url"] {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px 12px 42px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="url"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  background: var(--surface-3);
+}
+
+.url-input { padding-left: 52px !important; }
+
+.key-input {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  letter-spacing: 0.05em;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hint a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* BUTTON */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  letter-spacing: -0.01em;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0 var(--accent-glow);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-2);
+  box-shadow: 0 0 20px var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-full { width: 100%; font-size: 15px; padding: 14px; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-2);
+  border-color: var(--border);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.btn-green {
+  background: var(--green);
+  color: black;
+  border-color: var(--green);
+}
+
+.btn-green:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.btn-sm { padding: 8px 14px; font-size: 12px; }
+
+/* PROGRESS / SCRAPING STATUS */
+#scraping-status {
+  display: none;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-top: 20px;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.progress-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.progress-sub {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.log-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+  padding: 6px 10px;
+  border-radius: 7px;
+  background: var(--surface);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateX(-8px); } }
+
+.log-item.done { color: var(--green); }
+.log-item.active { color: var(--text); }
+
+.log-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.log-item.active .log-dot {
+  animation: pulse-dot 1s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* RESULTS */
+#results-section {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.stat-value.green { color: var(--green); }
+.stat-value.purple { color: var(--accent); }
+
+/* EMBED SECTION */
+.embed-section {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+.embed-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--surface-3);
+}
+
+.embed-code {
+  padding: 16px;
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 13px;
+  color: #a5f3fc;
+  word-break: break-all;
+  line-height: 1.6;
+  background: #09090b;
+}
+
+.embed-code .tag { color: #f472b6; }
+.embed-code .attr { color: #86efac; }
+.embed-code .val { color: #fde68a; }
+
+/* FILE LIST */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color 0.15s;
+}
+
+.file-item:hover { border-color: var(--border-light); }
+
+.file-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  border: 1px solid var(--border-light);
+}
+
+.file-info { flex: 1; }
+.file-name { font-size: 13px; font-weight: 500; letter-spacing: -0.01em; }
+.file-desc { font-size: 12px; color: var(--text-3); margin-top: 1px; }
+
+/* ACTION BUTTONS ROW */
+.action-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* HISTORY */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.history-item:hover {
+  border-color: var(--accent);
+  background: var(--surface-3);
+}
+
+.history-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+.history-info { flex: 1; min-width: 0; }
+.history-title {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.history-url { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+/* COPY BUTTON */
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: var(--surface-3);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--text-2);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+
+.copy-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+.copy-btn.copied { background: var(--green); color: black; border-color: var(--green); }
+
+/* TOGGLE PREVIEW */
+.widget-demo {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 12px;
+  text-align: center;
+  position: relative;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fake-toggle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 6px 20px rgba(99,102,241,0.4);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.fake-toggle:hover { transform: scale(1.1); }
+
+/* TOAST */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface-3);
+  color: var(--text);
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--border-light);
+  z-index: 9999;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ERROR */
+.error-box {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #fca5a5;
+  display: none;
+  margin-top: 12px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  nav { padding: 14px 20px; }
+  .hero { padding: 50px 20px 30px; }
+  .main-content { padding: 0 16px 60px; }
+  .result-grid { grid-template-columns: 1fr; }
+  .steps { flex-direction: column; }
+  .step { border-right: none; border-bottom: 1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="logo">
+    <div class="logo-icon">🕷️</div>
+    ChatBot Builder
+  </a>
+  <span class="nav-badge">v1.0 · OpenRouter</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">⚡ AI-Powered Web Scraping</div>
+  <h1>Build <span class="gradient">AI Chatbots</span><br>From Any Website</h1>
+  <p>Paste a URL. We scrape everything — services, products, contacts, location — and generate a fully-trained chatbot with an embeddable widget.</p>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <!-- BUILDER CARD -->
+  <div class="card">
+    <div class="card-header">
+      <div class="icon">🔧</div>
+      <div>
+        <h2>Chatbot Builder</h2>
+        <p>3 simple steps to your custom AI chatbot</p>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- STEPS -->
+      <div class="steps">
+        <div class="step active" id="step-1">
+          <div class="step-num">1</div>
+          <span class="step-label">API Key</span>
+        </div>
+        <div class="step" id="step-2">
+          <div class="step-num">2</div>
+          <span class="step-label">Enter URL</span>
+        </div>
+        <div class="step" id="step-3">
+          <div class="step-num">3</div>
+          <span class="step-label">Get Chatbot</span>
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <div class="form-group">
+        <label>🔑 OpenRouter API Key</label>
+        <div class="input-wrap">
+          <span class="input-prefix">🔑</span>
+          <input type="password" id="apiKey" class="key-input" 
+            placeholder="sk-or-v1-..." autocomplete="off">
+        </div>
+        <div class="hint">
+          Get your key at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a> 
+          · Uses gpt-4o-mini (very affordable)
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>🌐 Website URL to Scrape</label>
+        <div class="input-wrap">
+          <span class="input-prefix">🌐</span>
+          <input type="url" id="websiteUrl" class="url-input"
+            placeholder="https://example.com" autocomplete="off">
+        </div>
+        <div class="hint">
+          🔍 We'll scrape up to 8 pages automatically — home, about, services, contact & more
+        </div>
+      </div>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <button class="btn btn-primary btn-full" id="buildBtn" onclick="startBuild()">
+        <span>🚀</span> Scrape & Build Chatbot
+      </button>
+
+      <!-- SCRAPING STATUS -->
+      <div id="scraping-status">
+        <div class="progress-header">
+          <div class="spinner"></div>
+          <div>
+            <div class="progress-title" id="progress-title">Initializing scraper...</div>
+            <div class="progress-sub" id="progress-sub">This may take 20–60 seconds</div>
+          </div>
+        </div>
+        <div class="log-list" id="log-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="icon">✅</div>
+        <div>
+          <h2>Chatbot Ready!</h2>
+          <p id="result-subtitle">Your AI chatbot has been generated</p>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- STATS -->
+        <div class="result-grid">
+          <div class="stat-card">
+            <div class="stat-label">Pages Scraped</div>
+            <div class="stat-value green" id="stat-pages">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Data Points</div>
+            <div class="stat-value purple" id="stat-data">0</div>
+          </div>
+        </div>
+
+        <!-- FILES -->
+        <label>📁 Generated Files</label>
+        <div class="file-list" id="file-list"></div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="action-row">
+          <a id="preview-link" href="#" target="_blank" class="btn btn-primary">
+            👁 Preview Chatbot
+          </a>
+          <button id="copy-embed-btn" class="btn btn-ghost" onclick="copyEmbed()">
+            📋 Copy Embed Code
+          </button>
+        </div>
+
+        <!-- EMBED CODE -->
+        <div class="embed-section" style="margin-top: 20px;">
+          <div class="embed-header">
+            <span>🔌 Embed Widget on Any Page</span>
+            <button class="copy-btn" id="copy-btn-2" onclick="copyEmbed()">📋 Copy</button>
+          </div>
+          <div class="embed-code" id="embed-code-display"></div>
+        </div>
+
+        <!-- WIDGET DEMO -->
+        <div style="margin-top: 16px;">
+          <label>🎯 Widget Preview</label>
+          <div class="widget-demo">
+            <div class="fake-toggle" onclick="openPreview()">💬</div>
+            <p style="font-size: 13px; color: var(--text-3);">
+              This toggle button will appear on your website.<br>Click to see the full chatbot →
+            </p>
+          </div>
+        </div>
+
+        <!-- INSTRUCTIONS -->
+        <div style="margin-top: 16px; padding: 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px;">
+          <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text);">
+            📖 How to Deploy
+          </div>
+          <div style="font-size: 13px; color: var(--text-2); line-height: 1.7;">
+            1. Make sure this server (<code style="background: var(--surface-3); padding: 1px 6px; border-radius: 4px;">python app.py</code>) is running and accessible<br>
+            2. Copy the embed code above<br>
+            3. Paste it before <code style="background: var(--surface-3); padding: 1px 6px; border-radius: 4px;">&lt;/body&gt;</code> in any HTML page<br>
+            4. The chat widget will appear in the bottom-right corner ✅
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY CARD -->
+  <div class="card" id="history-card" style="display:none;">
+    <div class="card-header">
+      <div class="icon">📚</div>
+      <div>
+        <h2>Previous Chatbots</h2>
+        <p>Recently generated chatbots</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="history-list" id="history-list"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+let currentChatbotId = null;
+let currentEmbedCode = null;
+let currentPreviewUrl = null;
+
+// Load history on page load
+window.addEventListener('load', loadHistory);
+
+async function loadHistory() {
+  try {
+    const res = await fetch('/api/list-chatbots');
+    const data = await res.json();
+    if (data.chatbots && data.chatbots.length > 0) {
+      document.getElementById('history-card').style.display = 'block';
+      const list = document.getElementById('history-list');
+      list.innerHTML = data.chatbots.slice(0, 5).map(bot => `
+        <a class="history-item" href="/chatbot/${bot.chatbot_id}/preview" target="_blank">
+          <div class="history-dot"></div>
+          <div class="history-info">
+            <div class="history-title">${escapeHtml(bot.title)}</div>
+            <div class="history-url">${escapeHtml(bot.source_url)}</div>
+          </div>
+          <span style="font-size:11px;color:var(--text-3);">↗ Open</span>
+        </a>
+      `).join('');
+    }
+  } catch(e) {}
+}
+
+async function startBuild() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const url = document.getElementById('websiteUrl').value.trim();
+  const errorBox = document.getElementById('errorBox');
+  
+  errorBox.style.display = 'none';
+  
+  if (!apiKey) { showError('Please enter your OpenRouter API key.'); return; }
+  if (!url) { showError('Please enter a website URL.'); return; }
+  
+  // Update steps
+  setStep(2);
+  
+  // Show scraping status
+  document.getElementById('scraping-status').style.display = 'block';
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('buildBtn').disabled = true;
+  
+  // Simulate progress logs
+  const logs = [
+    { text: 'Connecting to website...', delay: 200 },
+    { text: 'Scraping homepage...', delay: 1200 },
+    { text: 'Discovering navigation links...', delay: 2500 },
+    { text: 'Scraping sub-pages (services, about, contact)...', delay: 3500 },
+    { text: 'Extracting contact info, services & products...', delay: 5000 },
+    { text: 'Building knowledge base...', delay: 7000 },
+    { text: 'Generating AI system prompt with OpenRouter...', delay: 9000 },
+    { text: 'Creating chatbot files & widget...', delay: 11000 },
+  ];
+  
+  const logList = document.getElementById('log-list');
+  logList.innerHTML = '';
+  
+  logs.forEach((log, i) => {
+    setTimeout(() => {
+      // Mark previous as done
+      const prev = logList.lastElementChild;
+      if (prev) {
+        prev.classList.remove('active');
+        prev.classList.add('done');
+        prev.querySelector('.log-dot').textContent = '';
+        prev.innerHTML = `<span style="font-size:14px">✓</span> ${prev.dataset.text}`;
+      }
+      
+      const item = document.createElement('div');
+      item.className = 'log-item active';
+      item.dataset.text = log.text;
+      item.innerHTML = `<div class="log-dot"></div> ${log.text}`;
+      logList.appendChild(item);
+      logList.scrollTop = logList.scrollHeight;
+      
+      if (i === 2) {
+        document.getElementById('progress-title').textContent = 'Scraping pages...';
+        setStep(2);
+      }
+      if (i === 6) {
+        document.getElementById('progress-title').textContent = 'Generating chatbot with AI...';
+        setStep(3);
+      }
+    }, log.delay);
+  });
+  
+  try {
+    const res = await fetch('/api/scrape-and-build', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, api_key: apiKey })
+    });
+    
+    const data = await res.json();
+    
+    // Mark last log as done
+    const lastLog = logList.lastElementChild;
+    if (lastLog) {
+      lastLog.classList.remove('active');
+      lastLog.classList.add('done');
+      lastLog.innerHTML = `<span style="font-size:14px">✓</span> ${lastLog.dataset.text}`;
+    }
+    
+    if (data.error) {
+      document.getElementById('scraping-status').style.display = 'none';
+      document.getElementById('buildBtn').disabled = false;
+      setStep(1);
+      showError('Error: ' + data.error);
+      return;
+    }
+    
+    // SUCCESS
+    currentChatbotId = data.chatbot_id;
+    currentEmbedCode = data.embed_code;
+    currentPreviewUrl = data.preview_url;
+    
+    // Update stats
+    document.getElementById('stat-pages').textContent = data.scraped_summary.pages_scraped;
+    document.getElementById('stat-data').textContent = data.scraped_summary.data_points;
+    document.getElementById('result-subtitle').textContent = 
+      `"${data.scraped_summary.title || url}" chatbot is ready! ID: ${data.chatbot_id}`;
+    
+    // Files
+    const fileIcons = { 'knowledge.json': '🧠', 'index.html': '🌐', 'widget.js': '⚡' };
+    document.getElementById('file-list').innerHTML = data.files.map(f => `
+      <div class="file-item">
+        <div class="file-icon">${fileIcons[f.name] || '📄'}</div>
+        <div class="file-info">
+          <div class="file-name">${f.name}</div>
+          <div class="file-desc">${f.description}</div>
+        </div>
+        <a href="/api/download/${data.chatbot_id}/${f.name}" 
+           class="btn btn-ghost btn-sm" download>⬇ Download</a>
+      </div>
+    `).join('');
+    
+    // Embed code syntax highlight
+    const code = data.embed_code;
+    document.getElementById('embed-code-display').innerHTML = 
+      code.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/&lt;(\/?script)/g, '&lt;<span class="tag">$1</span>')
+          .replace(/(src)=/g, '<span class="attr">$1</span>=')
+          .replace(/"([^"]+)"/g, '"<span class="val">$1</span>"');
+    
+    // Preview link
+    document.getElementById('preview-link').href = data.preview_url;
+    
+    // Show results
+    setTimeout(() => {
+      document.getElementById('scraping-status').style.display = 'none';
+      document.getElementById('results-section').style.display = 'block';
+      document.getElementById('buildBtn').disabled = false;
+      document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast('✅ Chatbot built successfully!');
+      loadHistory();
+    }, 800);
+    
+  } catch(e) {
+    document.getElementById('scraping-status').style.display = 'none';
+    document.getElementById('buildBtn').disabled = false;
+    setStep(1);
+    showError('Network error: ' + e.message + '. Make sure the Python server is running.');
+  }
+}
+
+function copyEmbed() {
+  if (!currentEmbedCode) return;
+  navigator.clipboard.writeText(currentEmbedCode).then(() => {
+    showToast('📋 Embed code copied!');
+    const btn = document.getElementById('copy-btn-2');
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function openPreview() {
+  if (currentPreviewUrl) {
+    window.open(currentPreviewUrl, '_blank');
+  }
+}
+
+function setStep(n) {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById(`step-${i}`);
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  }
+}
+
+function showError(msg) {
+  const box = document.getElementById('errorBox');
+  box.textContent = '❌ ' + msg;
+  box.style.display = 'block';
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+// Enter key support
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.target.id === 'websiteUrl') {
+    startBuild();
+  }
+});
+</script>
+</body>
+</html>
